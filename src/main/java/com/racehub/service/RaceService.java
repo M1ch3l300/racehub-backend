@@ -47,6 +47,9 @@ public class RaceService {
         race.setChampionship(championship);
         return raceRepository.save(race);
     }
+    public void deleteRaceResult(Long resultId) {
+        raceResultRepository.deleteById(resultId);
+    }
 
     @Transactional
     public Race updateRace(Long id, Race raceDetails) {

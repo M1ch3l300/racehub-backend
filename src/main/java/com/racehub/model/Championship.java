@@ -1,51 +1,52 @@
 package com.racehub.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "championships")
 @Data
+@EqualsAndHashCode(exclude = {"pilots", "races"})  // ← AGGIUNGI QUESTA!
 @NoArgsConstructor
 @AllArgsConstructor
 public class Championship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ✅ CORRETTO
+
     private Long id;
 
-    @NotBlank(message = "Championship name is required")
-    @Size(min = 3, max = 100)
     @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Season is required")
-    @Min(value = 2020)
-    @Max(value = 2030)
     @Column(nullable = false)
     private Integer season;
 
-    @NotBlank(message = "Status is required")
-    @Column(nullable = false)
-    private String status; // UPCOMING, ACTIVE, COMPLETED
+    private String status = "UPCOMING";
 
-    @Size(max = 500)
+    @Column(length = 1000)
     private String description;
 
     @Column(name = "max_pilots")
-    private Integer maxPilots = 20; // Default F1 grid
+    private Integer maxPilots = 20;
 
     @Column(name = "points_system")
-    private String pointsSystem = "25,18,15,12,10,8,6,4,2,1"; // F1 standard
+    private String pointsSystem = "25,18,15,12,10,8,6,4,2,1";
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @ManyToMany
     @JoinTable(
@@ -53,12 +54,10 @@ public class Championship {
             joinColumns = @JoinColumn(name = "championship_id"),
             inverseJoinColumns = @JoinColumn(name = "pilot_id")
     )
+    @JsonIgnore
     private Set<Pilot> pilots = new HashSet<>();
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "championship", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Race> races;
 }

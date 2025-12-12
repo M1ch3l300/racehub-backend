@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/championships")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class ChampionshipController {
 

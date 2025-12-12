@@ -1,49 +1,48 @@
 package com.racehub.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "pilots")
 @Data
+@EqualsAndHashCode(exclude = {"championships"})  // ← AGGIUNGI QUESTA!
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pilot {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @NotBlank(message = "Name is required")
-    @Size(min = 2, max = 100)
+
     @Column(nullable = false)
     private String name;
-    
-    @NotBlank(message = "Team is required")
-    @Size(max = 100)
-    @Column(nullable = false)
+
+    @Column(unique = true)
+    private String email;
+
     private String team;
-    
-    @NotNull(message = "Racing number is required")
-    @Min(value = 1, message = "Racing number must be positive")
-    @Max(value = 999, message = "Racing number must be max 999")
-    @Column(nullable = false, unique = true)
+
+    @Column(name = "racing_number")
     private Integer racingNumber;
-    
-    @Size(max = 50)
+
     private String nationality;
-    
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-    
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @ManyToMany(mappedBy = "pilots")
+    @JsonIgnore
+    private Set<Championship> championships = new HashSet<>();
 }

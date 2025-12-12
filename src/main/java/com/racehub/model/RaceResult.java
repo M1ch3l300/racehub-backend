@@ -1,13 +1,10 @@
 package com.racehub.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "race_results")
@@ -22,29 +19,24 @@ public class RaceResult {
 
     @ManyToOne
     @JoinColumn(name = "race_id", nullable = false)
+    @JsonIgnoreProperties({"results", "championship"})  // ← AGGIUNGI QUESTA!
     private Race race;
 
     @ManyToOne
     @JoinColumn(name = "pilot_id", nullable = false)
+    @JsonIgnoreProperties({"championships"})  // ← AGGIUNGI QUESTA!
     private Pilot pilot;
 
-    @NotNull(message = "Position is required")
-    @Min(value = 1)
-    @Max(value = 20)
     @Column(nullable = false)
     private Integer position;
 
-    @Min(value = 0)
     @Column(nullable = false)
-    private Integer points = 0;  // ✅ Calcolato automaticamente
+    private Integer points = 0;
 
-    @Column(nullable = false)
-    private String status = "FINISHED";
+    @Column(name = "fastest_lap")
+    private Boolean fastestLap = false;
 
-    @Size(max = 200)
+    private String status = "FINISHED"; // FINISHED, DNF, DSQ
+
     private String notes;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 }
