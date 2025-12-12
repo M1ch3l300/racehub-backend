@@ -28,6 +28,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username già in uso");
         }
+
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email già in uso");
         }
@@ -55,5 +56,16 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // NUOVI METODI
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElse(null);
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
     }
 }

@@ -56,9 +56,29 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
+            String identifier = request.getUsername() != null ? request.getUsername() : request.getEmail();
+            User user = null;
+
+            // Prova prima con email
+            if (request.getEmail() != null) {
+                user = userService.findByEmail(request.getEmail());
+            }
+
+            // Se non trovato con email, prova con username
+            if (user == null && request.getUsername() != null) {
+                user = userService.findByUsername(request.getUsername());
+            }
+
+            if (user == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Credenziali non valide");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Autentica con username (interno)
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
+                            user.getUsername(),
                             request.getPassword()
                     )
             );
@@ -66,16 +86,15 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtUtil.generateToken(userDetails);
 
-            User user = (User) userDetails;
-
             return ResponseEntity.ok(new AuthResponse(token, user));
 
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("error", "Username o password non corretti");
+            error.put("error", "Email/Username o password non corretti");
             return ResponseEntity.badRequest().body(error);
         }
     }
+
 
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user) {

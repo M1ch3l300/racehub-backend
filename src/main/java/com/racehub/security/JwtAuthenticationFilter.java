@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -21,7 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
-    // Usa @Lazy per evitare circular dependency
     public JwtAuthenticationFilter(JwtUtil jwtUtil,
                                    @Lazy UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
@@ -34,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
-
         String username = null;
         String jwt = null;
 
@@ -52,11 +54,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (jwtUtil.validateToken(jwt, userDetails)) {
+
+                    // ⚡ ESTRAI IL RUOLO DAL JWT TOKEN
+                    String role = jwtUtil.extractClaim(jwt, claims -> claims.get("role", String.class));
+
+                    // Crea authorities dal ruolo nel JWT
+                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    if (role != null && !role.isEmpty()) {
+                        authorities.add(new SimpleGrantedAuthority(role));
+                    } else {
+                        // Fallback: usa authorities dal database
+                        authorities.addAll(userDetails.getAuthorities());
+                    }
+
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
                                     null,
-                                    userDetails.getAuthorities()
+                                    authorities  // ← USA AUTHORITIES DAL JWT!
                             );
                     authenticationToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
