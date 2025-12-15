@@ -25,6 +25,11 @@ public class AnnouncementController {
         return ResponseEntity.ok(announcementService.getAllAnnouncements());
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Announcement>> getAllAnnouncementsAdmin() {
+        return ResponseEntity.ok(announcementService.getAllAnnouncementsAdmin());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Announcement> getAnnouncementById(@PathVariable Long id) {
         return ResponseEntity.ok(announcementService.getAnnouncementById(id));

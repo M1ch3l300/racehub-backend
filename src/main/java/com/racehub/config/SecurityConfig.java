@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/pilots/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/championships/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/races/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/announcements/all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/announcements/**").permitAll()
 
                         // POST/PUT/DELETE su Championships - solo ADMIN

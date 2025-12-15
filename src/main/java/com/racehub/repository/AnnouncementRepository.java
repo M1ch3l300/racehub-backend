@@ -18,4 +18,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Long
     List<Announcement> findByPinnedTrueOrderByCreatedAtDesc();
 
     List<Announcement> findByPublishedTrueOrderByCreatedAtDesc();
+
+    List<Announcement> findAllByOrderByCreatedAtDesc();
 }

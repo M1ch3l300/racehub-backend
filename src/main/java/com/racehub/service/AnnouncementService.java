@@ -21,6 +21,10 @@ public class AnnouncementService {
         return announcementRepository.findByPublishedTrueOrderByCreatedAtDesc();
     }
 
+    public List<Announcement> getAllAnnouncementsAdmin() {
+        return announcementRepository.findAllByOrderByCreatedAtDesc();
+    }
+
     public Announcement getAnnouncementById(Long id) {
         return announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Announcement not found with id: " + id));
