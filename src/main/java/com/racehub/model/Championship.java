@@ -15,14 +15,13 @@ import java.util.Set;
 @Entity
 @Table(name = "championships")
 @Data
-@EqualsAndHashCode(exclude = {"pilots", "races"})  // ← AGGIUNGI QUESTA!
+@EqualsAndHashCode(exclude = {"pilots", "races"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Championship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ✅ CORRETTO
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -60,4 +59,10 @@ public class Championship {
     @OneToMany(mappedBy = "championship", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Race> races;
+
+    // 🔥 METODO MAGICO - Conta i piloti automaticamente!
+    @Transient
+    public Integer getEnrolledPilotsCount() {
+        return pilots != null ? pilots.size() : 0;
+    }
 }

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.racehub.racehub_backend.RaceHubApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.185 s -- in com.racehub.racehub_backend.RaceHubApplicationTests

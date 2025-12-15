@@ -1,6 +1,7 @@
 package com.racehub.controller;
 
 import com.racehub.model.Championship;
+import com.racehub.model.Pilot;
 import com.racehub.service.ChampionshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/championships")
@@ -76,4 +78,11 @@ public class ChampionshipController {
         response.put("message", "Pilot removed from championship successfully");
         return ResponseEntity.ok(response);
     }
+    // 🔥 AGGIUNGI QUESTO METODO!
+    @GetMapping("/{id}/pilots")
+    public ResponseEntity<Set<Pilot>> getChampionshipPilots(@PathVariable Long id) {
+        Championship championship = championshipService.getChampionshipById(id);
+        return ResponseEntity.ok(championship.getPilots());
+    }
+
 }
