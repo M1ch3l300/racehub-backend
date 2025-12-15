@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: racehub-backend
+    runtime: docker
+    region: frankfurt
+    plan: free
+    branch: security/env-variables
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        sync: false
+    healthCheckPath: /actuator/health
+    autoDeploy: true
