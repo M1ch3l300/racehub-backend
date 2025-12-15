@@ -13,10 +13,13 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime with OpenJDK
-FROM openjdk:17-jdk-slim
+# Stage 2: Runtime with Eclipse Temurin (OpenJDK successor)
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
+
+# Install curl for health check
+RUN apk add --no-cache curl
 
 # Copy JAR from build stage
 COPY --from=build /app/target/racehub-backend-0.0.1-SNAPSHOT.jar app.jar
