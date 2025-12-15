@@ -1,0 +1,48 @@
+# Maven build artifacts
+target/
+!target/racehub-backend-0.0.1-SNAPSHOT.jar
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Git
+.git/
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.production
+application-local.properties
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+DEPLOY.md
+README_SECURITY.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Test files
+src/test/
+
+# Maven wrapper (we use Maven in Docker image)
+.mvn/
+mvnw
+mvnw.cmd
