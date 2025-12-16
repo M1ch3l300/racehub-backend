@@ -20,11 +20,12 @@ public class CorsConfig {
         String allowedOrigins = System.getenv("ALLOWED_ORIGINS");
         
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            // Se la variabile è definita, usa i valori specificati
-            configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+            // Usa setAllowedOriginPatterns invece di setAllowedOrigins per supportare wildcard (es. https://*.mgx.dev)
+            // Questo è necessario perché setAllowedOrigins non supporta wildcard quando allowCredentials è true
+            configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
         } else {
             // Fallback per sviluppo locale
-            configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+            configuration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         }
 
         // Permetti tutti i metodi HTTP

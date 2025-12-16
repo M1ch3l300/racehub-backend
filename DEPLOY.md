@@ -363,3 +363,11 @@ Per testare con origini multiple in locale, aggiungi al file `.env`:
 ```bash
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
 ```
+
+### Aggiornamento CORS (Wildcards)
+
+Il sistema ora supporta le wildcard nei domini. Per permettere l'accesso da qualsiasi sottodominio di mgx.dev (utile per le preview dinamiche), aggiorna la variabile su Render:
+
+```bash
+ALLOWED_ORIGINS=http://localhost:3000,https://*.mgx.dev,https://mgx.dev
+```
