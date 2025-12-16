@@ -16,8 +16,16 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Permetti richieste da localhost:3000 (React frontend)
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        // Leggi ALLOWED_ORIGINS da variabile d'ambiente
+        String allowedOrigins = System.getenv("ALLOWED_ORIGINS");
+        
+        if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
+            // Se la variabile è definita, usa i valori specificati
+            configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
+        } else {
+            // Fallback per sviluppo locale
+            configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        }
 
         // Permetti tutti i metodi HTTP
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
