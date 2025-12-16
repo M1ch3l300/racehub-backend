@@ -60,6 +60,9 @@ public class RaceHubBot extends TelegramLongPollingBot {
             case "/help":
                 return handleHelp();
 
+            case "/championships":
+                return handleChampionships();
+
             case "/standings":
                 return handleStandings(parts);
 
@@ -88,12 +91,43 @@ public class RaceHubBot extends TelegramLongPollingBot {
 
     private String handleHelp() {
         return "📋 *Comandi Disponibili:*\n\n" +
+                "/championships - Lista campionati attivi\n" +
                 "/standings [id] - Classifica campionato\n" +
                 "/races [id] - Lista gare campionato\n" +
                 "/results [raceId] - Risultati gara\n" +
                 "/pilots - Lista piloti\n" +
                 "/announcements [id] - Annunci campionato\n\n" +
                 "Esempio: /standings 1";
+    }
+
+    private String handleChampionships() {
+        try {
+            List<Championship> championships = championshipService.getAllChampionships();
+
+            if (championships.isEmpty()) {
+                return "⚠️ Nessun campionato trovato.";
+            }
+
+            StringBuilder response = new StringBuilder();
+            response.append("🏆 *CAMPIONATI DISPONIBILI*\n\n");
+
+            for (Championship ch : championships) {
+                String statusIcon = "ACTIVE".equals(ch.getStatus()) ? "🟢" :
+                                  "COMPLETED".equals(ch.getStatus()) ? "🏁" : "📅";
+                
+                response.append(statusIcon).append(" *").append(ch.getName()).append("* (ID: ").append(ch.getId()).append(")\n")
+                        .append("   Stagione: ").append(ch.getSeason()).append(" | Status: ").append(ch.getStatus()).append("\n\n");
+            }
+            
+            response.append("Usa l'ID per vedere i dettagli:\n")
+                    .append("/standings [id] - Classifica\n")
+                    .append("/races [id] - Calendario");
+
+            return response.toString();
+
+        } catch (Exception e) {
+            return "❌ Errore nel recuperare i campionati.";
+        }
     }
 
     private String handleStandings(String[] parts) {
