@@ -334,3 +334,32 @@ Una volta completato il deploy:
 5. ✅ Pronto per connettere il frontend!
 
 **Next Step**: Deploy frontend su Vercel con `REACT_APP_API_URL` configurato! 🚀
+## 🌐 CORS Configuration
+
+Il backend utilizza una variabile d'ambiente per configurare le origini permesse (CORS).
+
+### Variabile d'ambiente richiesta
+
+```bash
+ALLOWED_ORIGINS=http://localhost:3000,https://mgx.dev,https://app.mgx.dev
+```
+
+**Formato:** Lista di URL separati da virgola, senza spazi.
+
+### Configurazione su Render
+
+1. Vai su **Dashboard** → **racehub-backend** → **Environment**
+2. Aggiungi la variabile:
+   - **Key:** `ALLOWED_ORIGINS`
+   - **Value:** `http://localhost:3000,https://mgx.dev,https://app.mgx.dev`
+3. Salva e rideploy
+
+### Sviluppo locale
+
+Se `ALLOWED_ORIGINS` non è definita, il backend usa automaticamente `http://localhost:3000` come fallback.
+
+Per testare con origini multiple in locale, aggiungi al file `.env`:
+
+```bash
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+```
