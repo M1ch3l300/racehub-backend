@@ -6,6 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,15 +19,20 @@ public class CorsConfig {
 
         // Leggi ALLOWED_ORIGINS da variabile d'ambiente
         String allowedOrigins = System.getenv("ALLOWED_ORIGINS");
-        
+
+        List<String> originPatterns = new ArrayList<>();
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
             // Usa setAllowedOriginPatterns invece di setAllowedOrigins per supportare wildcard (es. https://*.mgx.dev)
             // Questo è necessario perché setAllowedOrigins non supporta wildcard quando allowCredentials è true
-            configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
+            originPatterns.addAll(Arrays.asList(allowedOrigins.split(",")));
         } else {
             // Fallback per sviluppo locale
-            configuration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+            originPatterns.add("http://localhost:3000");
         }
+
+        // Origini dell'app mobile Capacitor: iOS usa capacitor://localhost, Android https://localhost
+        originPatterns.addAll(List.of("capacitor://localhost", "https://localhost", "http://localhost"));
+        configuration.setAllowedOriginPatterns(originPatterns);
 
         // Permetti tutti i metodi HTTP
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
